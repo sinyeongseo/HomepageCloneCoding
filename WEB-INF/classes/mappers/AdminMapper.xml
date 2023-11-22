@@ -1,0 +1,331 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "//mybatis.org/DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="AdminMapper">
+
+	<select id="adminlogin" resultType="int">
+		select count(*) 
+		from member
+		where mb_id=#{mb_id} and mb_pw=#{mb_pw} and mb_role = 'admin'
+	</select>
+
+
+	<select id="countmember" resultType="int">
+		 <![CDATA[
+	        SELECT
+	            count(*)
+	        FROM
+	           member
+   		 ]]>
+	
+	</select>
+	
+	
+	<select id="getmember" resultType="hashmap" parameterType="hashmap">
+    <![CDATA[
+        SELECT
+            *
+        FROM
+            member
+        where mb_role is null
+        ORDER BY mb_regdate desc
+        LIMIT #{pageStart}, #{perPageNum}
+    ]]>
+	</select>
+	
+	<select id="getcontactContent" resultType="contactDTO">
+		SELECT mb_message, ct_check
+		FROM CONTACT
+		WHERE MB_ID = #{mb_id}
+	</select>
+	
+	<select id="getcommentContent" resultType="commentDTO">
+		SELECT tb_num,co_content
+		FROM COMMENT
+		WHERE CO_WRITER = #{mb_id}
+	</select>
+	
+	<select id="gettableContent" resultType="tableDTO">
+		SELECT tb_title, tb_content, tb_postdate
+		FROM TABLES
+		WHERE TB_WRITER = #{mb_id}
+	</select>
+	<select id="countcontact" resultType="int">
+		 <![CDATA[
+	        SELECT
+	            count(*)
+	        FROM
+	           contact
+   		 ]]>
+	
+	</select>
+	
+	
+	<select id="getcontact" resultType="hashmap" parameterType="hashmap">
+	 <![CDATA[
+        SELECT
+            *
+        FROM
+            contact
+        ORDER BY ct_check asc
+        LIMIT #{pageStart}, #{perPageNum}
+    ]]>
+	</select>
+	
+	<select id="countnotice" resultType="int">
+		 <![CDATA[
+	        SELECT
+	            count(*)
+	        FROM
+	           tables
+   		 ]]>
+	</select>
+	
+	
+	<select id="getnotice" resultType="hashmap" parameterType="hashmap">
+	<![CDATA[
+        SELECT
+            *
+        FROM
+            tables
+        ORDER BY 
+			 CASE
+            WHEN tb_writer = 'admin' AND EXISTS (
+                SELECT 1 FROM member WHERE member.mb_id = 'admin' AND member.mb_role = 'admin'
+            ) THEN 0
+            ELSE 1
+       		END, tb_num DESC
+        LIMIT #{pageStart}, #{perPageNum}
+    ]]>
+	</select>
+	
+	<select id="mbsearchService" resultType="memberDTO">
+		select * 
+			from member
+		WHERE mb_id LIKE CONCAT('%', #{mb_id}, '%')
+	</select>
+	
+	<select id="ctsearchService" resultType="contactDTO">
+		select *
+			from contact
+		 WHERE mb_name LIKE CONCAT('%', #{mb_name}, '%')
+	</select>
+	
+	<select id="ntsearchService" resultType="TableDTO">
+		select *
+			from tables
+		 WHERE tb_title LIKE CONCAT('%', #{tb_title}, '%')
+	</select>
+	
+	<select id="getmbContent" resultType="memberDTO">
+		select *
+			from member
+		where mb_id = #{mb_id}	
+	</select>
+	
+	<delete id="deletemember">
+		delete from member
+			where mb_id=#{mb_id}
+	</delete>
+	
+	<select id="getctContent" resultType="contactDTO">
+		select *
+			from contact
+		where ct_num = #{ct_num}	
+	</select>
+	
+	<delete id="deleteContact">
+		delete from contact
+			where ct_num=#{ct_num}
+	</delete>
+	
+	<select id="getntContent" resultType="tableDTO">
+		select *
+		from tables
+		where tb_num = #{tb_num}
+	</select>
+	
+	<delete id="deleteNotice">
+		delete from
+		tables	
+		where tb_num = #{nt_num}
+	</delete>
+	
+	<select id="getcoContent" resultType="commentDTO">
+		select * from comment
+		where tb_num = #{tb_num}
+	</select>
+	
+	<delete id="deleteComment">
+		delete from
+		comment
+		where co_no = #{co_no}
+	</delete>
+	
+	<update id="contactcheck">
+		update contact
+		set ct_check = 1
+		where ct_num=#{ct_num}
+	</update>
+	
+	<update id="contactcheckno">
+		update contact
+		set ct_check = 0
+		where ct_num=#{ct_num}
+	</update>
+	<select id="getJanCount" resultType="int">
+		SELECT COALESCE(COUNT(*), 0)
+		FROM tables
+		WHERE MONTH(tb_postdate) = 1 and YEAR(tb_postdate)= #{year};
+	</select>
+	<select id="getFebCount" resultType="int">
+		SELECT COALESCE(COUNT(*), 0)
+		FROM tables
+		WHERE MONTH(tb_postdate) = 2  and YEAR(tb_postdate)= #{year};
+	</select>
+	<select id="getMarCount" resultType="int">
+		SELECT COALESCE(COUNT(*), 0)
+		FROM tables
+		WHERE MONTH(tb_postdate) = 3  and YEAR(tb_postdate)= #{year};
+	</select>
+	<select id="getAprCount" resultType="int">
+		SELECT COALESCE(COUNT(*), 0)
+		FROM tables
+		WHERE MONTH(tb_postdate) = 4  and YEAR(tb_postdate)= #{year};
+	</select>
+	<select id="getMayCount" resultType="int">
+		SELECT COALESCE(COUNT(*), 0)
+		FROM tables
+		WHERE MONTH(tb_postdate) = 5  and YEAR(tb_postdate)= #{year};
+	</select>
+	<select id="getJunCount" resultType="int">
+		SELECT COALESCE(COUNT(*), 0)
+		FROM tables
+		WHERE MONTH(tb_postdate) = 6  and YEAR(tb_postdate)= #{year};
+	</select>
+	<select id="getJulCount" resultType="int">
+		SELECT COALESCE(COUNT(*), 0)
+		FROM tables
+		WHERE MONTH(tb_postdate) = 7 and YEAR(tb_postdate)= #{year};
+	</select>
+	<select id="getAugCount" resultType="int">
+		SELECT  COALESCE(COUNT(*), 0)
+		FROM tables
+		WHERE MONTH(tb_postdate) = 8  and YEAR(tb_postdate)= #{year};
+	</select>
+	<select id="getSepCount" resultType="int">
+		SELECT COALESCE(COUNT(*), 0)
+		FROM tables
+		WHERE MONTH(tb_postdate) = 9  and YEAR(tb_postdate)= #{year};
+	</select>
+	<select id="getOctCount" resultType="int">
+		SELECT COALESCE(COUNT(*), 0)
+		FROM tables
+		WHERE MONTH(tb_postdate) = 10  and YEAR(tb_postdate)= #{year};
+	</select>
+	<select id="getNovCount" resultType="int">
+		SELECT COALESCE(COUNT(*), 0)
+		FROM tables
+		WHERE MONTH(tb_postdate) = 11  and YEAR(tb_postdate)= #{year};
+	</select>
+	<select id="getDecCount" resultType="int">
+		SELECT COALESCE(COUNT(*), 0)
+		FROM tables
+		WHERE MONTH(tb_postdate) = 12  and YEAR(tb_postdate)= #{year};
+	</select>
+	
+	
+	<select id="getmJanCount" resultType="int">
+		SELECT COALESCE(COUNT(*), 0)
+		FROM member
+		WHERE MONTH(mb_regdate) = 1 and mb_role is null  and YEAR(mb_regdate)= #{year};
+	</select>
+	<select id="getmFebCount" resultType="int">
+		SELECT COALESCE(COUNT(*), 0)
+		FROM member
+		WHERE MONTH(mb_regdate) = 2 and mb_role is null  and YEAR(mb_regdate)= #{year};
+	</select>
+	<select id="getmMarCount" resultType="int">
+		SELECT COALESCE(COUNT(*), 0)
+		FROM member
+		WHERE MONTH(mb_regdate) = 3 and mb_role is null  and YEAR(mb_regdate)= #{year};
+	</select>
+	<select id="getmAprCount" resultType="int">
+		SELECT COALESCE(COUNT(*), 0)
+		FROM member
+		WHERE MONTH(mb_regdate) = 4 and mb_role is null  and YEAR(mb_regdate)= #{year};
+	</select>
+	<select id="getmMayCount" resultType="int">
+		SELECT COALESCE(COUNT(*), 0)
+		FROM member
+		WHERE MONTH(mb_regdate) = 5 and mb_role is null  and YEAR(mb_regdate)= #{year};
+	</select>
+	<select id="getmJunCount" resultType="int">
+		SELECT COALESCE(COUNT(*), 0)
+		FROM member
+		WHERE MONTH(mb_regdate) = 6 and mb_role is null  and YEAR(mb_regdate)= #{year};
+	</select>
+	<select id="getmJulCount" resultType="int">
+		SELECT COALESCE(COUNT(*), 0)
+		FROM member
+		WHERE MONTH(mb_regdate) = 7 and mb_role is null  and YEAR(mb_regdate)= #{year};
+	</select>
+	<select id="getmAugCount" resultType="int">
+		SELECT COALESCE(COUNT(*), 0)
+		FROM member
+		WHERE MONTH(mb_regdate) = 8 and mb_role is null  and YEAR(mb_regdate)= #{year};
+	</select>
+	<select id="getmSepCount" resultType="int">
+		SELECT COALESCE(COUNT(*), 0)
+		FROM member
+		WHERE MONTH(mb_regdate) = 9 and mb_role is null  and YEAR(mb_regdate)= #{year};
+	</select>
+	<select id="getmOctCount" resultType="int">
+		SELECT COALESCE(COUNT(*), 0)
+		FROM member
+		WHERE MONTH(mb_regdate) = 10 and mb_role is null  and YEAR(mb_regdate)= #{year};
+	</select>
+	<select id="getmNovCount" resultType="int">
+		SELECT COALESCE(COUNT(*), 0)
+		FROM member
+		WHERE MONTH(mb_regdate) = 11 and mb_role is null  and YEAR(mb_regdate)= #{year};
+	</select>
+	<select id="getmDecCount" resultType="int">
+		SELECT COALESCE(COUNT(*), 0)
+		FROM member
+		WHERE MONTH(mb_regdate) = 12 and mb_role is null  and YEAR(mb_regdate)= #{year};
+	</select>
+	<select id="getmemcount" resultType="int">
+		SELECT COALESCE(COUNT(*), 0)
+		FROM contact
+		WHERE mb_id is not null  and YEAR(ct_postdate)= #{year};
+	</select>
+	<select id="getnocount" resultType="int">
+		SELECT COALESCE(COUNT(*), 0)
+		FROM contact
+		WHERE mb_id = ''  and YEAR(ct_postdate)= #{year};
+	</select>
+	<select id="getTotalcontact" resultType="float">
+	    SELECT COALESCE(((SUM(ct_check = 1) / NULLIF(COUNT(*), 0)) * 100), 0) AS ct_check_1_percentage
+	    FROM contact
+	    WHERE YEAR(ct_postdate) = #{year};
+	</select>
+	<select id="getTotalmember" resultType="int">
+		select COALESCE(COUNT(*), 0)
+		from member
+		where YEAR(mb_regdate)= #{year};
+	</select>
+	<select id="getTotalNotCount" resultType="int">
+		select COALESCE(COUNT(*), 0)
+		from tables
+		where YEAR(tb_postdate)= #{year};
+	</select>
+	<select id="getTotalComCount" resultType="int">
+		select COALESCE(COUNT(*), 0)
+		from comment
+		where YEAR(co_date)= #{year};
+	</select>
+	<insert id="noticeservice">
+		insert into tables (tb_title, tb_writer, tb_content, tb_postdate, tb_visit, tb_like, tb_pwd, tb_comment)
+		value(#{tb_title}, #{tb_writer}, #{tb_content}, default, default, default, default, default)
+	</insert>
+</mapper>

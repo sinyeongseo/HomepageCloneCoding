@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "//mybatis.org/DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="MemberMapper">
+	<!-- 회원가입 -->
+	<insert id="register">
+		insert into member(mb_id, mb_pw, mb_name, mb_mail, mb_phone, mb_regdate, mb_role)
+			values(#{mb_id},#{mb_pw}, #{mb_name}, #{mb_mail}, #{mb_phone}, default, default)
+	</insert>
+	
+	<!-- id 중복검사 -->
+	<select id="idCheck" resultType="int">
+		select count(*) from member where mb_id = #{input_id}
+	</select>
+	
+	<!-- 로그인 -->
+	<select id="login" resultType="MemberDTO">
+		select *
+		from member
+		where mb_id =#{mb_id} and mb_pw=#{mb_pw}
+	</select>
+	
+	<!-- id 찾기 -->
+	<select id="idsearch" resultType="MemberDTO">
+		select mb_id, mb_regdate
+		from member
+		where mb_name=#{mb_name} and mb_mail=#{mb_mail}
+	</select>
+	
+	<!-- pw 찾기 -->
+	<select id="pwsearch" resultType="MemberDTO">
+		select mb_pw, mb_regdate
+		from member
+		where mb_name=#{mb_name} and mb_id=#{mb_id}
+	</select>
+	
+	<select id="getuser" resultType="MemberDTO">
+		select *
+		from member
+		where mb_id = #{memberId}
+	</select>
+	
+	
+</mapper>

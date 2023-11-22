@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "//mybatis.org/DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="TableMapper">
+
+	<select id="getList" resultType="hashmap" parameterType="hashmap">
+    <![CDATA[
+        SELECT
+            *
+        FROM
+            tables
+        ORDER BY 
+			 CASE
+            WHEN tb_writer = 'admin' AND EXISTS (
+                SELECT 1 FROM member WHERE member.mb_id = 'admin' AND member.mb_role = 'admin'
+            ) THEN 0
+            ELSE 1
+       		END, tb_num DESC
+        LIMIT #{pageStart}, #{perPageNum}
+    ]]>
+	</select>
+	
+	<select id="countTableList" resultType="int">
+		 <![CDATA[
+        SELECT
+            count(*)
+        FROM
+           tables
+   		 ]]>
+	</select>
+	
+	<select id="getContent" resultType="TableDTO">
+		select tb_num, tb_title, tb_writer, tb_content, tb_postdate, tb_visit, tb_like
+			from tables
+		where tb_num = #{tb_num}
+	</select>
+	
+	<insert id="writeService">
+		insert into tables (tb_title, tb_writer, tb_content, tb_postdate, tb_visit, tb_like, tb_pwd, tb_comment)
+		 values(#{tb_title}, #{tb_writer}, #{tb_content}, default, default, default, #{tb_pwd}, default)
+	</insert>
+	
+	<select id="tbpwCheck" resultType="int">
+		select count(*)
+			from tables
+		where tb_num = #{tb_num} and tb_pwd = #{tb_pwd}
+	</select>
+	
+	<delete id="deleteService">
+		delete from tables
+		where tb_num = #{tb_num}
+	</delete>
+
+	<update id="editService" parameterType="tableDTO">
+	    update tables 
+	   	 set tb_title = #{tb_title}, tb_writer = #{tb_writer}, tb_content = #{tb_content}, tb_postdate = default
+	    where tb_num = #{tb_num}
+	</update>
+	
+	<update id="likeService" parameterType="tableDTO">
+		update tables
+		 set tb_like = #{tb_like}+1
+		where tb_num = #{tb_num}
+	</update>
+	
+	<update id="viewService" parameterType="tableDTO">
+		update tables
+		 set tb_visit = #{tb_visit}+1
+		where tb_num = #{tb_num}
+	</update>
+	
+	<select id="searchService" resultType="tableDTO">
+		select * from tables
+		 WHERE tb_title LIKE CONCAT('%', #{tb_title}, '%')
+	</select>
+	
+	
+	<insert id="commentService">
+		insert into comment (tb_num, co_writer, co_content, co_date)
+		 values(#{tb_num}, #{co_writer}, #{co_content}, default)
+	</insert>
+	
+	<select id="getCommentList" resultType="commentDTO">
+		select * 
+		from comment
+		where tb_num = #{tb_num}
+	</select>
+	
+	<update id="commentcount">
+		UPDATE tables t
+		SET tb_comment = (
+		    SELECT count(*)
+		    FROM comment c
+		    WHERE c.tb_num = t.tb_num
+		);
+	</update>
+	
+	<select id="gettablerole" resultType="memberDTO">
+		select mb_role
+		from member
+		where mb_id = #{tb_writer}
+	</select>
+
+	<select id="getwriter" resultType="tableDTO">
+		select tb_writer
+		from tables
+		where tb_num = #{tb_num}
+	</select>
+</mapper> 

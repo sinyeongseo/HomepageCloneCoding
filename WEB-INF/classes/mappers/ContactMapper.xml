@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "//mybatis.org/DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="ContactMapper">
+<!-- 회원가입 -->
+	<insert id="contact">
+		insert into contact(mb_id, mb_name, mb_phone, mb_mail, mb_message)
+			values(#{mb_id}, #{mb_name}, #{mb_phone}, #{mb_mail}, #{mb_message})
+	</insert>
+</mapper>
